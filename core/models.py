@@ -13,7 +13,7 @@ class ToDo(models.Model):
     description   = models.TextField()
     priority      = models.CharField(max_length=10,choices=PRIORITY, default='Active')
     created_date  = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(null=True, blank=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title

@@ -20,18 +20,20 @@ def todo_list(request):
         serializer = ToDoSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            retun JsonResponse(serializer.data, status=201)
-        retun JsonResponse(serializer.errors, status=400)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
 
 
 @csrf_exempt
 def todo_detail(request, pk):
 
-     try:
-         item = ToDo.objects.get(pk=pk)
+
+    try:
+        item = ToDo.objects.get(pk=pk)
     
     except ToDo.DoesNotExist:
-        retun HttpResponse(status=404)
+
+        return HttpResponse(status=404)
 
     if request.method == 'GET':
         serializer = ToDoSerializer(item)
