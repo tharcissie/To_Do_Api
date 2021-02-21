@@ -13,9 +13,8 @@ class ToDo(models.Model):
     description   = models.TextField()
     priority      = models.CharField(max_length=10,choices=PRIORITY, default='Active')
     created_date  = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
-    owner         = models.ForeignKey('auth.User', related_name='todos', on_delete=models.CASCADE)
-
+    modified_date = models.DateTimeField(auto_now=True, null=True)
+    
     def __str__(self):
         return self.title
 

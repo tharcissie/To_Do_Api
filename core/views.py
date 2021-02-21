@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated 
 from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 # Create your views here.
 
@@ -33,6 +34,9 @@ class ToDoList(APIView):
     """
     List all todos, or create a new ones.
     """
+
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, format=None):
         todos = ToDo.objects.all()
         serializer = ToDoSerializer(todos, many=True)
@@ -44,6 +48,13 @@ class ToDoList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get_queryset(self):
+        qs = super(ToDoList, self).get_queryset()
+        title = self.request.query_params.get("title", None)
+        if title:
+            qs = qs.filter(title=title)
+        return qs
 
 
 
@@ -81,6 +92,8 @@ class ToDoDetail(APIView):
     """
     Retrieve, update or delete a todo instance.
     """
+    permission_classes = (IsAuthenticated,)
+
     def get_object(self, pk):
         try:
             return ToDo.objects.get(pk=pk)
@@ -89,12 +102,12 @@ class ToDoDetail(APIView):
 
     def get(self, request, pk, format=None):
         todo = self.get_object(pk)
-        serializer = ToDoSerializer(snippet)
+        serializer = ToDoSerializer(todo)
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         todo = self.get_object(pk)
-        serializer = ToDoSerializer(snippet, data=request.data)
+        serializer = ToDoSerializer(todo, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
